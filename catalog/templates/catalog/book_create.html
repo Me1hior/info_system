@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load bootstrap %}
+
+{%block title%}Страница создания новой книги{%endblock%}
+
+{% block content %}
+<div class="container" style="color: #1F8062">
+    <h2><b><i>Создание книги</i></b></h2>
+</div>
+
+
+<form method="POST" enctype="multipart/form-data">
+    {%csrf_token%}
+    <div class="container">
+        {{ form_class.title|bootstrap}}
+        {{ form_class.author|bootstrap}}
+        {{ form_class.teg|bootstrap}}
+        {{ form_class.media }}
+        {{ form_class.date_field|bootstrap}}
+        {{ form_class.image_field|bootstrap}}
+        {{ form_class.description|bootstrap}}
+    <button class="btn btn-success">Создать книгу</button>
+    </div>
+
+    </div>
+</form>
+{%endblock%}

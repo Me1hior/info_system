@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous">
+    <title>{%block title%}Домашняя страница{%endblock%}</title>
+</head>
+
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark"
+     style="background-color: #113228;">
+    <a href="" class="navbar-brand"></a>
+    <img src="http://static.kpavlovsky.pro/deploy-django/django-dj.png"
+         height="30" alt="">
+    <button class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false"
+            aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a href="{% url 'base' %}" class="nav-link">Home</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#"
+                   id="navbarDropdown" role="button" data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false">Списки</a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="{% url 'author-list' %}">Авторов</a>
+                    <a class="dropdown-item" href="{% url 'book-list' 'list'%}">Книг</a>
+                    <a class="dropdown-item"
+                       href="{% url 'teg-list' %}">Тэгов</a>
+                </div>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#"
+                   id="navbarDropdown4" role="button" data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false">API</a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item"
+                       href="{% url 'author-list-api' %}">
+                        Список всех авторов</a>
+                    <a class="dropdown-item"
+                       href="{% url 'author-create-api' %}">
+                        Создать автора</a>
+                    <a class="dropdown-item"
+                       href="{% url 'author-detail-api' '1'%}">
+                        Изменить, удалить автора</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'book-list-api' %}">
+                        Список всех книг</a>
+                    <a class="dropdown-item"
+                       href="{% url 'book-create-api' %}">
+                        Создать книгу</a>
+                    <a class="dropdown-item"
+                       href="{% url 'book-detail-api' '1'%}">
+                        Изменить, удалить книгу</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'teg-list-api' %}">
+                        Список всех тэгов</a>
+                    <a class="dropdown-item" href="{% url 'teg-create-api' %}">
+                        Создать тэг</a>
+                    <a class="dropdown-item"
+                       href="{% url 'teg-detail-api' '1'%}">
+                        Изменить, удалить тэг</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item"
+                       href="{% url 'teg-update-api' '1'%}">
+                        Добавление и
+                        удаление тегов к
+                        книге отдельным endpoint-ом</a>
+                </div>
+            </li>
+
+            <li class="nav-item">
+                <a href="/admin/" class="nav-link">Admin</a>
+            </li>
+
+        </ul>
+        {% block search %}
+        {% endblock %}
+    </div>
+</nav>
+
+{% if query %}
+{% block query %}
+{% endblock %}
+{% endif %}
+
+
+{% block content %}
+<div class="container">
+    <h2><b>models.py</b>.</h2>
+    <ul>
+        <li>активность тега переделанна на bool, и  исправленна в темплейтах и вьюхах</li>
+        <li>Для телефона сделал валидацию на шаблон +9(999)999-99-99</li>
+        <li>Модели книг и авторов наследуют общую модель Validate с полями: created_by и changed_by.</li>
+        <li>Если сохранять, изменять пользователя, с помошью REST, тогда в поля created_by и changed_by записывается пользователь</li>
+        <li>Добавлять, изменять и удалять данные, теперь могут только авторизовавшимся в админке пользователи. Просматривать может кто угодно</li>
+
+        <li>Теперь запрешенно добавлять тег, если тег с таким же именем уже введен</li>
+    </ul>
+
+    <h2><b>admin.py</b>.</h2>
+    <ul>
+        <li>Теперь у автора, в админ панели, видны все его книиги, а на странице с книгой - все теги книги</li>
+        <li>Для автора добавленн admin_actions с генерацией рандомных авторов.(работает из выподающего меню)</li>
+        <li>Добавлен фильтр к тегам. Отбор по активности</li>
+    </ul>
+
+    <h2><b>views.py</b>.</h2>
+    <ul>
+        <li>Для авторов сделана пагинация</li>
+        <li>Все списковые представления наследуются от ListView.</li>
+        <li>Для удаления объектов используются DeleteView (через id)</li>
+        <li>Для изменения объектов используются UpdateView (через id)</li>
+        <li>В классах используются стандартные переменные класса для хранения модели, темплейта и т.д.</li>
+        <li>Вклассах используются стандартные процедуры get_queryset, get_object, get_context и т.д.</li>
+        <li>Все ссылки переделанны на reverse и автогенерируются через { url }</li>
+        <li>Темплейты теперь правильно хранится templates>название приложения>файлы.</li>
+        <li>ссылки переделать на автогенерацию через</li>
+        <li>Для книги использован ручной рендеренг формы</li>
+        <li>Урлы по api вынести в отдельный файл</li>
+    </ul>
+</div>
+
+{% endblock %}
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+</body>
+</html>

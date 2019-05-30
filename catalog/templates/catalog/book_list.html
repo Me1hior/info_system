@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %} Список Книг {% endblock %}
+
+{% block query %}
+<div class="container">
+    <div class="alert alert-success" role="alert">
+        <h2>Результат фильтрации по запросу {{query}}</h2>
+    </div>
+</div>
+{% endblock %}
+
+{% block search %}
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Авторы</a>
+    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+        {% for author in all_authors %}
+        <a class="dropdown-item" href="{% url 'book-list' author.surname %}">{{author.name}} {{author.surname}}</a>
+        {% endfor %}
+    </div>
+</li>
+
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Тэги</a>
+    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+        {% for teg in all_tegs %}
+        <a class="dropdown-item" href="{% url 'book-list' teg.title %}">{{teg.title}}</a>
+        {% endfor %}
+    </div>
+</li>
+
+<form action="{% url 'book-list' 'search' %}" class="form-inline my-2 my-lg-0" method = "get">
+    <input type="text" class="form-control mr-sm-2" placeholder="Поиск по подстроке" aria-label="search" name="search">
+    <button class="btn btn-outline-success my-2 my-sn-0">Поиск</button>
+</form>
+{% endblock %}
+
+{%block content%}
+<div class="container">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Название</th>
+            <th scope="col">Дата публикации</th>
+            <th scope="col">Краткое описание</th>
+            <th scope="col">Изображение-превью</th>
+            <th scope="col">Автор</th>
+            <th scope="col">Тэг</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for book in all_books %}
+        <tr>
+            <td>{{book.id}}</td>
+            <td>{{book.title}}</td>
+            <td>{{book.date_field}}</td>
+            <td>{{book.description}}</td>
+            <td>{{book.image_field}}</td>
+            <td>{{book.author}}</td>
+            <td>{{book.teg.all.0}}
+                <br>{{book.teg.all.1}}
+                <br>{{book.teg.all.2}}</td>
+            <td>
+                <form action="{% url 'book-update' book.id %}" method = 'post'>
+                    {%csrf_token%}
+                    <button class="btn btn-success">Изменить</button>
+                </form>
+            </td>
+            <td>
+                <form action="{% url 'book-delete' book.id %}" method = 'post'>
+                    {%csrf_token%}
+                    <button class="btn btn-success" value="no" name="question">Удалить</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="container">
+    <form action="{% url 'book-create' %}" method = 'post'>
+        {%csrf_token%}
+        <button class="btn btn-success">Добавить книгу</button>
+    </form>
+</div>
+{%endblock%}

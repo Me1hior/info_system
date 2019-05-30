@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %} Список Тэгов {% endblock %}
+
+{% block query %}
+<div class="container">
+    <div class="alert alert-success" role="alert">
+        <h2>{{query}}</h2>
+    </div>
+</div>
+{% endblock %}
+
+{% block search %}
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Активность</a>
+    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+        <a class="dropdown-item" href="/teg/active/">Активные тэги</a>
+        <a class="dropdown-item" href="/teg/nonactive/">Неактивные тэги</a>
+    </div>
+</li>
+
+<form action="" class="form-inline my-2 my-lg-0" method = 'post'>
+    {%csrf_token%}
+    <input type="text" class="form-control mr-sm-2" placeholder="Фильтр по названию" aria-label="search" name="search">
+    <button class="btn btn-outline-success my-2 my-sn-0">Search</button>
+</form>
+{% endblock %}
+
+{%block content%}
+<div class="container">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Название</th>
+            <th scope="col">Активность</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for teg in tegs %}
+        <tr>
+            <td>{{teg.id}}</td>
+            <td>{{teg.title}}</td>
+            <td>{{teg.flag}}</td>
+            <td>
+                <form action="/teg/{{teg.id}}/update/" method = 'post'>
+                    {%csrf_token%}
+                    <button class="btn btn-success">Изменить</button>
+                </form>
+            </td>
+            <td>
+                <form action="/teg/{{teg.id}}/delete/" method = 'post'>
+                    {%csrf_token%}
+                    <button class="btn btn-success">Удалить</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="container">
+    <form action="{% url 'teg-create' %}" method = 'post'>
+        {%csrf_token%}
+        <button class="btn btn-success">Добавить тэг</button>
+    </form>
+</div>
+{%endblock%}
